@@ -4,25 +4,36 @@ import Bullet from "./bullet";
 class EnemyJet extends MovingObject {
   constructor(x, y, texture, app) {
     super(x, y, texture);
-    this.speed = 2;
+    this.speed = 0.5;
     this.app = app;
 
     // Create a new bullet every 0.5 seconds
     setInterval(() => {
-      const bulletTexture = PIXI.Texture.from("./src/picture/playerbullet.png");
+      const bulletTexture = PIXI.Texture.from("./src/picture/playerbullet.png"); // Update the texture
       const bullet = new Bullet(
         this.sprite.x,
         this.sprite.y + this.sprite.height / 2,
         bulletTexture,
-        "down"
+        "down", // Add direction
+        app // Add app
       );
       this.app.stage.addChild(bullet.sprite);
-    }, 500);
+
+      // Add this block to update the enemy bullet's position
+      app.ticker.add(() => {
+        bullet.move(0, 1); // Update the bullet's position
+
+        // Remove the bullet if it goes beyond the bottom edge of the screen
+        if (bullet.sprite.y > app.view.height) {
+          app.stage.removeChild(bullet.sprite);
+        }
+      });
+    }, 2000);
   }
 
   move() {
     this.sprite.x -= this.speed;
-  } 
+  }
 
   checkBounds(app) {
     if (this.sprite.x < -this.sprite.width) {
@@ -32,17 +43,16 @@ class EnemyJet extends MovingObject {
       );
     }
   }
-
-  checkCollisions(objects) {
-    for (let i = 0; i < objects.length; i++) {
-      const object = objects[i];
+  checkCollisions(bullets) {
+    for (let i = 0; i < bullets.length; i++) {
+      const bullet = bullets[i];
       if (
-        object instanceof Bullet &&
-        object.direction === "up" &&
-        this.sprite.getBounds().contains(object.sprite.x, object.sprite.y)
+        bullet.direction === "up" &&
+        this.sprite.getBounds().contains(bullet.sprite.x, bullet.sprite.y)
       ) {
-        app.stage.removeChild(this.sprite);
-        app.stage.removeChild(object.sprite);
+        this.app.stage.removeChild(this.sprite);
+        this.app.stage.removeChild(bullet.sprite);
+        bullets.splice(i, 1); // Remove the bullet from the bullets array
         return true;
       }
     }

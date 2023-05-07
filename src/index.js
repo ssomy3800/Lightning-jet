@@ -1,6 +1,5 @@
 import PlayerJet from "./scripts/PlayerJet";
 import EnemyJet from "./scripts/EnemyJet";
-import Bullet from "./scripts/bullet";
 
 const app = new PIXI.Application({
   width: 800,
@@ -50,34 +49,33 @@ app.ticker.add(() => {
 
 // Spawn two enemy jets on the sides of the screen
 const enemyJetTexture = PIXI.Texture.from("./src/picture/jet.png");
-const enemyJet1 = new EnemyJet(
-  -enemyJetTexture.width,
-  Math.random() * app.view.height,
-  enemyJetTexture,
-  app
-);
-const enemyJet2 = new EnemyJet(
-  app.view.width + enemyJetTexture.width,
-  Math.random() * app.view.height,
-  enemyJetTexture,
-  app
-);
 
-app.stage.addChild(enemyJet1.sprite);
-app.stage.addChild(enemyJet2.sprite);
+const enemyJets = Array(40)
+  .fill(null)
+  .map(
+    () =>
+      new EnemyJet(
+        Math.random() * app.view.width + app.view.width,
+        Math.random() * app.view.height,
+        enemyJetTexture,
+        app
+      )
+  );
+
+// Add enemy jets to the stage
+enemyJets.forEach((enemyJet) => app.stage.addChild(enemyJet.sprite));
 
 app.ticker.add(() => {
-  enemyJet1.move();
-  enemyJet1.checkBounds(app);
-  enemyJet2.move();
-  enemyJet2.checkBounds(app);
+  // ...
 
-  const collided =
-    enemyJet1.checkCollisions([player, ...bullets]) ||
-    enemyJet2.checkCollisions([player, ...bullets]);
-  if (collided) {
-    console.log("Game over!");
-    app.ticker.stop();
-  }
+  enemyJets.forEach((enemyJet) => {
+    enemyJet.move();
+    enemyJet.checkBounds(app);
+
+    const collided = enemyJet.checkCollisions([player, ...bullets]);
+    if (collided) {
+      console.log("Game over!");
+      app.ticker.stop();
+    }
+  });
 });
-
