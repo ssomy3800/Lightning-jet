@@ -1,4 +1,7 @@
 import PlayerJet from "./scripts/PlayerJet";
+import EnemyJet from "./scripts/EnemyJet";
+import Bullet from "./scripts/bullet";
+
 const app = new PIXI.Application({
   width: 800,
   height: 600,
@@ -7,9 +10,12 @@ const app = new PIXI.Application({
 
 document.getElementById("main").appendChild(app.view);
 
-const playerTexture = PIXI.Texture.from("./src/picture/jet.png");
+const playerTexture = PIXI.Texture.from("./src/picture/playerjet.png", {
+  alphaMode: PIXI.ALPHA_MODES.PREMULTIPLIED,
+});
 
 const player = new PlayerJet(
+  app,
   app.view.width / 2,
   app.view.height - 50,
   playerTexture
@@ -25,27 +31,53 @@ document.addEventListener("keyup", (e) => {
   keys[e.key] = false;
 });
 
+const bullets = []; // Define the bullets array
+
 app.ticker.add(() => {
   player.handleKeyboard(keys);
+
+  // Update the bullets
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const bullet = bullets[i];
+    bullet.move();
+    bullet.checkBounds(app);
+    if (bullet.destroyed) {
+      app.stage.removeChild(bullet.sprite);
+      bullets.splice(i, 1);
+    }
+  }
 });
-// import PlayerJet from "./scripts/player_jet";
 
-// document.addEventListener("DOMContentLoaded", () => {
-//   const canvas = document.getElementById("gameCanvas");
-//   const ctx = canvas.getContext("2d");
+// Spawn two enemy jets on the sides of the screen
+const enemyJetTexture = PIXI.Texture.from("./src/picture/jet.png");
+const enemyJet1 = new EnemyJet(
+  -enemyJetTexture.width,
+  Math.random() * app.view.height,
+  enemyJetTexture,
+  app
+);
+const enemyJet2 = new EnemyJet(
+  app.view.width + enemyJetTexture.width,
+  Math.random() * app.view.height,
+  enemyJetTexture,
+  app
+);
 
-//   const player = new PlayerJet(canvas.width / 2, canvas.height - 50, 50, 50, 5);
+app.stage.addChild(enemyJet1.sprite);
+app.stage.addChild(enemyJet2.sprite);
 
-//   function gameLoop() {
-//     player.update();
-//     draw();
-//     requestAnimationFrame(gameLoop);
-//   }
+app.ticker.add(() => {
+  enemyJet1.move();
+  enemyJet1.checkBounds(app);
+  enemyJet2.move();
+  enemyJet2.checkBounds(app);
 
-//   gameLoop();
+  const collided =
+    enemyJet1.checkCollisions([player, ...bullets]) ||
+    enemyJet2.checkCollisions([player, ...bullets]);
+  if (collided) {
+    console.log("Game over!");
+    app.ticker.stop();
+  }
+});
 
-//   function draw() {
-//     ctx.clearRect(0, 0, canvas.width, canvas.height);
-//     player.draw(ctx);
-//   }
-// });
