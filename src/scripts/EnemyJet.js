@@ -39,7 +39,7 @@ class EnemyJet extends MovingObject {
     if (this.sprite.x < -this.sprite.width) {
       this.setPosition(
         app.view.width + this.sprite.width,
-        Math.random() * app.view.height
+        (Math.random() * app.view.height) / 3
       );
     }
   }

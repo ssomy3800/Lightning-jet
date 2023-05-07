@@ -30,52 +30,72 @@ document.addEventListener("keyup", (e) => {
   keys[e.key] = false;
 });
 
-const bullets = []; // Define the bullets array
+const playerBullets = [];
+const enemyBullets = [];
 
 app.ticker.add(() => {
   player.handleKeyboard(keys);
 
-  // Update the bullets
-  for (let i = bullets.length - 1; i >= 0; i--) {
-    const bullet = bullets[i];
+  // Update the player bullets
+  for (let i = playerBullets.length - 1; i >= 0; i--) {
+    const bullet = playerBullets[i];
     bullet.move();
     bullet.checkBounds(app);
     if (bullet.destroyed) {
       app.stage.removeChild(bullet.sprite);
-      bullets.splice(i, 1);
+      playerBullets.splice(i, 1);
+    }
+  }
+
+  for (let i = enemyBullets.length - 1; i >= 0; i--) {
+    const bullet = enemyBullets[i];
+    bullet.move();
+    bullet.checkBounds(app);
+    if (bullet.destroyed) {
+      app.stage.removeChild(bullet.sprite);
+      enemyBullets.splice(i, 1);
     }
   }
 });
 
-// Spawn two enemy jets on the sides of the screen
 const enemyJetTexture = PIXI.Texture.from("./src/picture/jet.png");
 
-const enemyJets = Array(40)
-  .fill(null)
-  .map(
-    () =>
-      new EnemyJet(
-        Math.random() * app.view.width + app.view.width,
-        Math.random() * app.view.height,
-        enemyJetTexture,
-        app
-      )
-  );
+const enemyJets = [];
 
-// Add enemy jets to the stage
-enemyJets.forEach((enemyJet) => app.stage.addChild(enemyJet.sprite));
+// Add this function to spawn a group of 5 enemy jets
+function spawnEnemyJets() {
+  for (let i = 0; i < 5; i++) {
+    const enemyJet = new EnemyJet(
+      Math.random() * app.view.width + app.view.width,
+      (Math.random() * app.view.height) / 3,
+      enemyJetTexture,
+      app
+    );
+    enemyJets.push(enemyJet);
+    app.stage.addChild(enemyJet.sprite);
+  }
+}
+
+// Call spawnEnemyJets function every 10 seconds
+let spawnInterval = setInterval(() => {
+  spawnEnemyJets();
+}, 10000);
+
+// Spawn the first group of enemy jets
+spawnEnemyJets();
 
 app.ticker.add(() => {
   // ...
 
-  enemyJets.forEach((enemyJet) => {
+  enemyJets.forEach((enemyJet, i) => {
     enemyJet.move();
     enemyJet.checkBounds(app);
 
-    const collided = enemyJet.checkCollisions([player, ...bullets]);
+    const collided = enemyJet.checkCollisions(playerBullets);
     if (collided) {
-      console.log("Game over!");
-      app.ticker.stop();
+      console.log("Enemy jet destroyed!");
+      app.stage.removeChild(enemyJet.sprite);
+      enemyJets.splice(i, 1); // Remove the destroyed enemy jet from the array
     }
   });
 });
