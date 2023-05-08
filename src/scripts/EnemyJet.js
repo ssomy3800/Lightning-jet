@@ -2,11 +2,16 @@ import MovingObject from "./MovingObject";
 import Bullet from "./bullet";
 
 class EnemyJet extends MovingObject {
-  constructor(x, y, texture, app) {
+  constructor(x, y, texture, app, type) {
     super(x, y, texture);
     this.speed = 0.5;
     this.app = app;
-
+    this.type = type;
+    if (this.type === "common") {
+      this.hp = 1;
+    } else if (this.type === "boss") {
+      this.hp = 10;
+    }
     // Create a new bullet every 0.5 seconds
     this.bulletInterval = setInterval(() => {
       const bulletTexture = PIXI.Texture.from("./src/picture/playerbullet.png"); // Update the texture
@@ -35,7 +40,7 @@ class EnemyJet extends MovingObject {
     this.sprite.x -= this.speed;
   }
 
-  checkBounds(app) {
+  checkBounds() {
     if (this.sprite.x < -this.sprite.width) {
       this.destroyed = true;
     }
@@ -56,11 +61,18 @@ class EnemyJet extends MovingObject {
         bullet.direction === "up" &&
         expandedBounds.contains(bullet.sprite.x, bullet.sprite.y)
       ) {
-        this.app.stage.removeChild(this.sprite);
-        this.app.stage.removeChild(bullet.sprite);
-        bullets.splice(i, 1); // Remove the bullet from the bullets array
-        clearInterval(this.bulletInterval);
-        return true;
+        if (this.hp !== 0) {
+          this.app.stage.removeChild(bullet.sprite);
+          bullets.splice(i, 1);
+          this.hp--;
+          // console.log(this.hp);
+        } else {
+          this.app.stage.removeChild(this.sprite);
+          this.app.stage.removeChild(bullet.sprite);
+          bullets.splice(i, 1); // Remove the bullet from the bullets array
+          clearInterval(this.bulletInterval);
+          return true;
+        }
       }
     }
     return false;

@@ -10,9 +10,7 @@ const app = new PIXI.Application({
 
 document.getElementById("main").appendChild(app.view);
 
-const playerTexture = PIXI.Texture.from("./src/picture/playerjet.png", {
-  alphaMode: PIXI.ALPHA_MODES.PREMULTIPLIED,
-});
+const playerTexture = PIXI.Texture.from("./src/picture/playerjet.png");
 const playerBullets = [];
 const enemyBullets = [];
 const player = new PlayerJet(
@@ -65,7 +63,7 @@ app.ticker.add(() => {
   for (let i = enemyJets.length - 1; i >= 0; i--) {
     const enemyJet = enemyJets[i];
     enemyJet.move();
-    enemyJet.checkBounds(app);
+    enemyJet.checkBounds();
     if (enemyJet.destroyed) {
       app.stage.removeChild(enemyJet.sprite);
       enemyJets.splice(i, 1); // Remove the enemy jet from the enemyJets array
@@ -74,25 +72,39 @@ app.ticker.add(() => {
 });
 ///////////////////remove enemy jet if it got hit by player bullet//////////////
 const enemyJetTexture = PIXI.Texture.from("./src/picture/jet.png");
+const bossJetTexture = PIXI.Texture.from("./src/picture/boss.png");
 
 const enemyJets = [];
-
+let bossJet = null;
 // Add this function to spawn a group of 5 enemy jets
 function spawnEnemyJets() {
   for (let i = 0; i < 1; i++) {
     const enemyJet = new EnemyJet(
-      Math.random() * app.view.width + app.view.width,
+      app.view.width,
       (Math.random() * app.view.height) / 3,
       enemyJetTexture,
-      app
+      app,
+      "common"
     );
+    // console.log(enemyJet.type);
     enemyJets.push(enemyJet);
     app.stage.addChild(enemyJet.sprite);
   }
 }
+
+function spawnBossJets() {
+  bossJet = new EnemyJet(
+    app.view.width,
+    (Math.random() * app.view.height) / 3,
+    bossJetTexture,
+    app,
+    "boss"
+  );
+  app.stage.addChild(bossJet.sprite);
+}
 let enemySpawnCount = 0;
 let enemyKillCount = 0;
-const enemyCount = 3;
+const enemyCount = 10;
 
 // Call spawnEnemyJets function every 10 seconds
 const spawnInterval = setInterval(() => {
@@ -100,6 +112,7 @@ const spawnInterval = setInterval(() => {
     spawnEnemyJets();
     enemySpawnCount++;
   } else {
+    spawnBossJets();
     clearInterval(spawnInterval);
   }
 }, 1000);
@@ -107,18 +120,35 @@ const spawnInterval = setInterval(() => {
 app.ticker.add(() => {
   enemyJets.forEach((enemyJet, i) => {
     enemyJet.move();
-    enemyJet.checkBounds(app);
+    enemyJet.checkBounds();
+
     // console.log(playerBullets);
     const collided = enemyJet.checkCollisions(playerBullets);
     // console.log(collided);
     if (collided) {
       console.log("Enemy jet destroyed!");
       enemyKillCount++;
-      if (enemyKillCount === enemyCount) {
-        console.log("you win!");
-      }
       app.stage.removeChild(enemyJet.sprite);
       enemyJets.splice(i, 1); // Remove the destroyed enemy jet from the array
     }
   });
+
+  // console.log(enemyDisppeared);
+});
+
+app.ticker.add(() => {
+  if (bossJet) {
+    bossJet.move();
+    bossJet.checkBounds();
+    let bossHP = 10;
+    // console.log(playerBullets);
+    const collided = bossJet.checkCollisions(playerBullets, bossHP);
+    // console.log(collided);
+    if (collided) {
+      bossHP--;
+    }
+    if (bossHP === 0) {
+      app.stage.removeChild(bossJet.sprite);
+    }
+  }
 });
