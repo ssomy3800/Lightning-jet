@@ -8,7 +8,7 @@ class EnemyJet extends MovingObject {
     this.app = app;
 
     // Create a new bullet every 0.5 seconds
-    setInterval(() => {
+    this.bulletInterval = setInterval(() => {
       const bulletTexture = PIXI.Texture.from("./src/picture/playerbullet.png"); // Update the texture
       const bullet = new Bullet(
         this.sprite.x,
@@ -37,22 +37,29 @@ class EnemyJet extends MovingObject {
 
   checkBounds(app) {
     if (this.sprite.x < -this.sprite.width) {
-      this.setPosition(
-        app.view.width + this.sprite.width,
-        (Math.random() * app.view.height) / 3
-      );
+      this.destroyed = true;
     }
   }
   checkCollisions(bullets) {
+    const padding = 30; // Add padding to expand the range
+
     for (let i = 0; i < bullets.length; i++) {
       const bullet = bullets[i];
+      const expandedBounds = new PIXI.Rectangle(
+        this.sprite.getBounds().x - padding / 2,
+        this.sprite.getBounds().y,
+        this.sprite.getBounds().width + padding,
+        this.sprite.getBounds().height
+      );
+
       if (
         bullet.direction === "up" &&
-        this.sprite.getBounds().contains(bullet.sprite.x, bullet.sprite.y)
+        expandedBounds.contains(bullet.sprite.x, bullet.sprite.y)
       ) {
         this.app.stage.removeChild(this.sprite);
         this.app.stage.removeChild(bullet.sprite);
         bullets.splice(i, 1); // Remove the bullet from the bullets array
+        clearInterval(this.bulletInterval);
         return true;
       }
     }
