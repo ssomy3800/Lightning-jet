@@ -41,13 +41,13 @@ class EnemyJet extends MovingObject {
     }, 2000);
   }
 
-  move() {
-    this.sprite.x -= this.speed;
-  }
-  // move(dx, dy) {
-  //   this.sprite.x -= dx;
-  //   this.sprite.y -= dy;
+  // move() {
+  //   this.sprite.x -= this.speed;
   // }
+  move(dx, dy) {
+    this.sprite.x -= dx;
+    this.sprite.y -= dy;
+  }
 
   checkBounds() {
     if (this.type === "common") {
