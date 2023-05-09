@@ -92,7 +92,6 @@ app.ticker.add(() => {
   ////////////////enemy bullet, will be destroyed once it goes outside the board///////////
   for (let i = enemyJets.length - 1; i >= 0; i--) {
     const enemyJet = enemyJets[i];
-    // enemyJet.move();
     enemyJet.checkBounds();
     if (enemyJet.destroyed) {
       app.stage.removeChild(enemyJet.sprite);
@@ -134,10 +133,11 @@ function spawnBossJets() {
     0
   );
   app.stage.addChild(bossJet.sprite);
+  enemyJets.push(bossJet);
 }
 let enemySpawnCount = 0;
 
-const enemyCount = 1;
+const enemyCount = 15;
 
 // Call spawnEnemyJets function every 10 seconds
 const spawnInterval = setInterval(() => {
@@ -153,27 +153,11 @@ const spawnInterval = setInterval(() => {
 app.ticker.add(() => {
   enemyJets.forEach((enemyJet, i) => {
     const collided = enemyJet.checkCollisions(playerBullets);
-
     if (collided) {
-      console.log("Enemy jet destroyed!");
       score.enemyKillCount++;
       player.upgradeWeapon();
       app.stage.removeChild(enemyJet.sprite);
       enemyJets.splice(i, 1); // Remove the destroyed enemy jet from the array
     }
   });
-});
-
-app.ticker.add(() => {
-  if (bossJet) {
-    bossJet.checkBounds();
-    let bossHP = 10;
-    const collided = bossJet.checkCollisions(playerBullets, bossHP);
-    if (collided) {
-      bossHP--;
-    }
-    if (bossHP === 0) {
-      app.stage.removeChild(bossJet.sprite);
-    }
-  }
 });

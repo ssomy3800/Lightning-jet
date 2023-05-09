@@ -89,7 +89,7 @@ class EnemyJet extends MovingObject {
   }
   checkCollisions(bullets) {
     const padding = 30; // Add padding to expand the range
-
+    
     for (let i = 0; i < bullets.length; i++) {
       const bullet = bullets[i];
       const expandedBounds = new PIXI.Rectangle(
