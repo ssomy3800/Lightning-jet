@@ -7,24 +7,53 @@ const app = new PIXI.Application({
   backgroundColor: 0x1099bb,
 });
 //////////////////////////////create gameboard//////////////////////////////////
-
 document.getElementById("main").appendChild(app.view);
+async function setup() {
+  const bg1Texture = await PIXI.Assets.load("./src/picture/bg1.png");
+  const bg2Texture = await PIXI.Assets.load("./src/picture/bg2.png");
+
+  const bg1 = new PIXI.Sprite(bg1Texture);
+  const bg2 = new PIXI.Sprite(bg2Texture);
+
+  bg2.alpha = 0;
+
+  app.stage.addChild(bg1);
+  app.stage.addChild(bg2);
+
+  let fadeIn = true;
+
+  app.ticker.add(() => {
+    if (fadeIn) {
+      bg2.alpha += 0.01;
+      if (bg2.alpha >= 3) {
+        fadeIn = false;
+      }
+    } else {
+      bg2.alpha -= 0.01;
+      if (bg2.alpha <= 0) {
+        fadeIn = true;
+      }
+    }
+  });
+}
+
+setup();
 
 const playerTexture = PIXI.Texture.from("./src/picture/playerjet.png");
 const playerBullets = [];
 const enemyBullets = [];
+const score = {
+  enemyKillCount: 0,
+};
+
 const player = new PlayerJet(
   app,
   app.view.width / 2,
   app.view.height - 50,
   playerTexture,
-  playerBullets
+  playerBullets,
+  score
 );
-
-app.stage.addChild(player.sprite);
-
-/////////////////////////////added player jet///////////////////////////////
-
 const keys = {};
 document.addEventListener("keydown", (e) => {
   keys[e.key] = true;
@@ -36,6 +65,9 @@ document.addEventListener("keyup", (e) => {
 ////////////////////////////to set the player can hold on to key to keep moving on the direction/////////////
 app.ticker.add(() => {
   player.handleKeyboard(keys);
+  app.stage.addChild(player.sprite);
+
+  /////////////////////////////added player jet///////////////////////////////
 
   // Update the player bullets
   for (let i = playerBullets.length - 1; i >= 0; i--) {
@@ -95,7 +127,7 @@ function spawnEnemyJets() {
 function spawnBossJets() {
   bossJet = new EnemyJet(
     app.view.width,
-    (Math.random() * app.view.height) / 3,
+    (Math.random() * app.view.height) / 4,
     bossJetTexture,
     app,
     "boss"
@@ -103,7 +135,7 @@ function spawnBossJets() {
   app.stage.addChild(bossJet.sprite);
 }
 let enemySpawnCount = 0;
-let enemyKillCount = 0;
+
 const enemyCount = 10;
 
 // Call spawnEnemyJets function every 10 seconds
@@ -127,7 +159,7 @@ app.ticker.add(() => {
     // console.log(collided);
     if (collided) {
       console.log("Enemy jet destroyed!");
-      enemyKillCount++;
+      score.enemyKillCount++;
       app.stage.removeChild(enemyJet.sprite);
       enemyJets.splice(i, 1); // Remove the destroyed enemy jet from the array
     }
