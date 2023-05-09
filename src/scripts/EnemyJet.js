@@ -2,11 +2,13 @@ import MovingObject from "./MovingObject";
 import Bullet from "./bullet";
 
 class EnemyJet extends MovingObject {
-  constructor(x, y, texture, app, type) {
+  constructor(x, y, texture, app, type, dx, dy) {
     super(x, y, texture);
     this.speed = 0.5;
     this.app = app;
     this.type = type;
+    this.dx = dx;
+    this.dy = dy;
     if (this.type === "common") {
       this.hp = 1;
     } else if (this.type === "boss") {
@@ -14,6 +16,7 @@ class EnemyJet extends MovingObject {
     }
     this.bulletInterval = null;
     this.fireBullet();
+    this.moveTicker = null;
   }
 
   fireBullet() {
@@ -41,31 +44,47 @@ class EnemyJet extends MovingObject {
     }, 2000);
   }
 
-  // move() {
-  //   this.sprite.x -= this.speed;
+  // move(dx, dy) {
+  //   this.app.ticker.add(() => {
+  //     this.sprite.x += this.speed * dx;
+  //     this.sprite.y += this.speed * dy;
+  //   });
   // }
   move(dx, dy) {
-    this.sprite.x -= dx;
-    this.sprite.y -= dy;
-  }
+    // Remove the existing ticker function if there's any
+    if (this.moveTicker) {
+      this.app.ticker.remove(this.moveTicker);
+    }
 
+    // Create a new ticker function with the new direction
+    this.moveTicker = () => {
+      this.sprite.x += this.speed * dx;
+      this.sprite.y += this.speed * dy;
+    };
+
+    // Add the new ticker function to the app ticker
+    this.app.ticker.add(this.moveTicker);
+  }
   checkBounds() {
     if (this.type === "common") {
       if (
         this.sprite.y > this.app.view.height + this.sprite.height ||
         this.destroyed
       ) {
-        // Remove the enemy jet if it goes beyond the bottom edge of the screen or is destroyed
         this.destroyed = true;
       }
-    } else {
-      // Move the enemy jet back and forth if it goes out of bounds
+      // Move the common enemy jet
+      this.move(this.dx, this.dy);
+    } else if (this.type === "boss") {
       if (
-        this.sprite.y > this.app.view.height + this.sprite.height ||
-        this.sprite.y < -this.sprite.height
+        (this.dx < 0 && this.sprite.x <= 10) ||
+        (this.dx > 0 && this.sprite.x >= this.app.view.width)
       ) {
-        this.move();
+        this.dx *= -1;
       }
+
+      // Move the boss enemy jet
+      this.move(this.dx, this.dy);
     }
   }
   checkCollisions(bullets) {
@@ -88,7 +107,6 @@ class EnemyJet extends MovingObject {
           this.app.stage.removeChild(bullet.sprite);
           bullets.splice(i, 1);
           this.hp--;
-          // console.log(this.hp);
         } else {
           this.app.stage.removeChild(this.sprite);
           this.app.stage.removeChild(bullet.sprite);
