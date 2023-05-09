@@ -55,8 +55,19 @@ const player = new PlayerJet(
   score
 );
 const keys = {};
+let isPaused = false;
+
 document.addEventListener("keydown", (e) => {
-  keys[e.key] = true;
+  if (e.key === "P" || e.key === "p") {
+    if (isPaused) {
+      app.ticker.start();
+    } else {
+      app.ticker.stop();
+    }
+    isPaused = !isPaused;
+  } else {
+    keys[e.key] = true;
+  }
 });
 document.addEventListener("keyup", (e) => {
   keys[e.key] = false;
@@ -126,7 +137,7 @@ function spawnBossJets() {
 }
 let enemySpawnCount = 0;
 
-const enemyCount = 11;
+const enemyCount = 1;
 
 // Call spawnEnemyJets function every 10 seconds
 const spawnInterval = setInterval(() => {
