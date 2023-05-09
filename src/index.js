@@ -70,17 +70,16 @@ app.ticker.add(() => {
   /////////////////////////////added player jet///////////////////////////////
 
   // Update the player bullets
-  for (let i = playerBullets.length - 1; i >= 0; i--) {
-    const bullet = playerBullets[i];
-    bullet.move(0, -10); // Move the bullet here
-    bullet.checkBounds(app);
-    // console.log(playerBullets);
-    if (bullet.sprite.y < -bullet.sprite.height || bullet.destroyed) {
-      // Remove the bullet if it goes beyond the top edge of the screen or is destroyed
-      app.stage.removeChild(bullet.sprite);
-      playerBullets.splice(i, 1);
-    }
-  }
+  // for (let i = playerBullets.length - 1; i >= 0; i--) {
+  //   const bullet = playerBullets[i];
+  //   bullet.move(0, -10);
+  //   bullet.checkBounds(app);
+  //   if (bullet.sprite.y < -bullet.sprite.height || bullet.destroyed) {
+  //     // Remove the bullet if it goes beyond the top edge of the screen or is destroyed
+  //     app.stage.removeChild(bullet.sprite);
+  //     playerBullets.splice(i, 1);
+  //   }
+  // }
   ////////////////player bullet, will be destroyed once it goes outside the board///////////
   for (let i = enemyBullets.length - 1; i >= 0; i--) {
     const bullet = enemyBullets[i];
@@ -151,6 +150,7 @@ const spawnInterval = setInterval(() => {
 
 app.ticker.add(() => {
   enemyJets.forEach((enemyJet, i) => {
+    // enemyJet.move(0.5, 0);
     enemyJet.move();
     enemyJet.checkBounds();
 
@@ -160,6 +160,7 @@ app.ticker.add(() => {
     if (collided) {
       console.log("Enemy jet destroyed!");
       score.enemyKillCount++;
+      player.upgradeWeapon();
       app.stage.removeChild(enemyJet.sprite);
       enemyJets.splice(i, 1); // Remove the destroyed enemy jet from the array
     }

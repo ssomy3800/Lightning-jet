@@ -12,6 +12,11 @@ class EnemyJet extends MovingObject {
     } else if (this.type === "boss") {
       this.hp = 10;
     }
+    this.bulletInterval = null;
+    this.fireBullet();
+  }
+
+  fireBullet() {
     // Create a new bullet every 0.5 seconds
     this.bulletInterval = setInterval(() => {
       const bulletTexture = PIXI.Texture.from("./src/picture/playerbullet.png"); // Update the texture
@@ -20,17 +25,17 @@ class EnemyJet extends MovingObject {
         this.sprite.y + this.sprite.height / 2,
         bulletTexture,
         "down", // Add direction
-        app // Add app
+        this.app // Add app
       );
       this.app.stage.addChild(bullet.sprite);
 
       // Add this block to update the enemy bullet's position
-      app.ticker.add(() => {
+      this.app.ticker.add(() => {
         bullet.move(0, 1); // Update the bullet's position
 
         // Remove the bullet if it goes beyond the bottom edge of the screen
-        if (bullet.sprite.y > app.view.height) {
-          app.stage.removeChild(bullet.sprite);
+        if (bullet.sprite.y > this.app.view.height) {
+          this.app.stage.removeChild(bullet.sprite);
         }
       });
     }, 2000);
@@ -39,10 +44,28 @@ class EnemyJet extends MovingObject {
   move() {
     this.sprite.x -= this.speed;
   }
+  // move(dx, dy) {
+  //   this.sprite.x -= dx;
+  //   this.sprite.y -= dy;
+  // }
 
   checkBounds() {
-    if (this.sprite.x < -this.sprite.width) {
-      this.destroyed = true;
+    if (this.type === "common") {
+      if (
+        this.sprite.y > this.app.view.height + this.sprite.height ||
+        this.destroyed
+      ) {
+        // Remove the enemy jet if it goes beyond the bottom edge of the screen or is destroyed
+        this.destroyed = true;
+      }
+    } else {
+      // Move the enemy jet back and forth if it goes out of bounds
+      if (
+        this.sprite.y > this.app.view.height + this.sprite.height ||
+        this.sprite.y < -this.sprite.height
+      ) {
+        this.move();
+      }
     }
   }
   checkCollisions(bullets) {

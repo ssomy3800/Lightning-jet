@@ -7,18 +7,100 @@ class PlayerJet extends MovingObject {
     this.speed = 5;
     this.app = app;
     this.score = score;
-    this.upgradeWeapon();
     this.playerBullets = playerBullets;
+    this.currentWeapon = null;
+    this.upgradeWeapon();
+    this.fireBullet();
   }
+  fireBullet() {
+    this.app.ticker.add(() => {
+      for (let i = this.playerBullets.length - 1; i >= 0; i--) {
+        const bullet = this.playerBullets[i];
+        if (bullet.type === "top-left") {
+          bullet.move(-3, -10);
+        } else if (bullet.type === "top-right") {
+          bullet.move(3, -10);
+        } else {
+          bullet.move(0, -10);
+        }
 
+        bullet.checkBounds(this.app);
+        if (bullet.sprite.y < -bullet.sprite.height || bullet.destroyed) {
+          // Remove the bullet if it goes beyond the top edge of the screen or is destroyed
+          this.app.stage.removeChild(bullet.sprite);
+          this.playerBullets.splice(i, 1);
+        }
+      }
+    });
+  }
   upgradeWeapon() {
     const bulletTexture = PIXI.Texture.from("./src/picture/playerbullet.png");
+
     // Create a new bullet every second
     if (this.score.enemyKillCount > 5) {
+      clearInterval(this.currentWeapon);
+      this.currentWeapon = setInterval(() => {
+        const bullet1 = new Bullet(
+          this.sprite.x - this.sprite.width / 3,
+          this.sprite.y - this.sprite.height / 2,
+          bulletTexture,
+          "up",
+          this.app,
+          "top-left"
+        );
+        const bullet2 = new Bullet(
+          this.sprite.x,
+          this.sprite.y - this.sprite.height / 2,
+          bulletTexture,
+          "up",
+          this.app,
+          "straight-top"
+        );
+        const bullet3 = new Bullet(
+          this.sprite.x + this.sprite.width / 3,
+          this.sprite.y - this.sprite.height / 2,
+          bulletTexture,
+          "up",
+          this.app,
+          "top-right"
+        );
+
+        this.app.stage.addChild(bullet1.sprite, bullet2.sprite, bullet3.sprite);
+        this.playerBullets.push(bullet1, bullet2, bullet3);
+      }, 700);
     } else if (this.score.enemyKillCount > 3) {
+      clearInterval(this.currentWeapon);
+      this.currentWeapon = setInterval(() => {
+        const bullet = new Bullet(
+          this.sprite.x + this.sprite.width / 3,
+          this.sprite.y - this.sprite.height / 2,
+          bulletTexture,
+          "up"
+        );
+        const bullet2 = new Bullet(
+          this.sprite.x - this.sprite.width / 3,
+          this.sprite.y - this.sprite.height / 2,
+          bulletTexture,
+          "up"
+        );
+        this.app.stage.addChild(bullet.sprite, bullet2.sprite);
+        this.playerBullets.push(bullet, bullet2);
+      }, 700);
     } else if (this.score.enemyKillCount > 1) {
+      clearInterval(this.currentWeapon);
+      this.currentWeapon = setInterval(() => {
+        const bullet = new Bullet(
+          this.sprite.x,
+          this.sprite.y - this.sprite.height / 2,
+          bulletTexture,
+          "up"
+        );
+        this.app.stage.addChild(bullet.sprite);
+        this.playerBullets.push(bullet);
+      }, 700);
     } else {
-      setInterval(() => {
+      clearInterval(this.currentWeapon);
+      this.currentWeapon = setInterval(() => {
         const bullet = new Bullet(
           this.sprite.x,
           this.sprite.y - this.sprite.height / 2,
