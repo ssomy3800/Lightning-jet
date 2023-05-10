@@ -58,7 +58,7 @@ const score = {
   enemyKillCount: 0,
 };
 
-const player = new PlayerJet(
+let player = new PlayerJet(
   app,
   app.view.width / 2,
   app.view.height - 50,
@@ -87,8 +87,10 @@ document.addEventListener("keyup", (e) => {
 
 ////////////////////////////to set the player can hold on to key to keep moving on the direction/////////////
 app.ticker.add(() => {
-  player.handleKeyboard(keys);
-  app.stage.addChild(player.sprite);
+  if (!player.destroyed) {
+    player.handleKeyboard(keys);
+    app.stage.addChild(player.sprite);
+  }
 
   /////////////////////////////added player jet///////////////////////////////
 });
@@ -146,7 +148,6 @@ const spawnInterval = setInterval(() => {
 }, 1000);
 
 app.ticker.add(() => {
-  console.log(enemyBullets);
   enemyJets.forEach((enemyJet, i) => {
     const collided = enemyJet.checkCollisions(playerBullets);
 
@@ -209,7 +210,9 @@ app.ticker.add(() => {
   const playerCollided = player.checkCollisions(enemyBullets);
 
   if (playerCollided) {
+    player.destroyed = true;
     app.stage.removeChild(player.sprite);
+    clearInterval(player.currentWeapon);
 
     const spriteSheet = PIXI.Texture.from("./src/picture/enemyExplosion.png");
     const frameWidth = 192;
@@ -239,6 +242,7 @@ app.ticker.add(() => {
     explosionSprite.animationSpeed = 0.1;
     explosionSprite.visible = true;
     explosionSprite.position.set(player.sprite.x, player.sprite.y);
+
     app.stage.addChild(explosionSprite);
     explosionSprite.play();
 
@@ -246,5 +250,6 @@ app.ticker.add(() => {
     setTimeout(() => {
       app.stage.removeChild(explosionSprite);
     }, 1000);
+    player = player.spawnNewPlayerJet();
   }
 });

@@ -6,9 +6,15 @@ class PlayerJet extends MovingObject {
     super(x, y, texture);
     this.speed = 5;
     this.app = app;
+    this.destroyed = false;
     this.score = score;
     this.playerBullets = playerBullets;
     this.currentWeapon = null;
+    // this.hp = 3
+    this.invulnerable = false;
+    this.invulnerableDuration = 3000; // 3 seconds of invulnerability
+    this.blinkDuration = 200; // 200 milliseconds per blink
+    this.blinkInterval = null;
     this.upgradeWeapon();
     this.fireBullet();
   }
@@ -137,7 +143,10 @@ class PlayerJet extends MovingObject {
   }
   checkCollisions(bullets) {
     const padding = 30; // Add padding to expand the range
-
+    if (this.destroyed || this.invulnerable === true) {
+      // If the player jet is destroyed, don't check for collisions
+      return false;
+    }
     for (let i = 0; i < bullets.length; i++) {
       const bullet = bullets[i];
       const expandedBounds = new PIXI.Rectangle(
@@ -160,6 +169,43 @@ class PlayerJet extends MovingObject {
       }
     }
     return false;
+  }
+  spawnNewPlayerJet() {
+    const newPlayerJet = new PlayerJet(
+      this.app,
+      this.app.view.width / 2,
+      this.app.screen.height - 50,
+      this.sprite.texture,
+      this.playerBullets,
+      this.score
+    );
+
+    newPlayerJet.invulnerable = true;
+    newPlayerJet.startBlinking();
+    setTimeout(() => {
+      newPlayerJet.stopBlinking();
+      newPlayerJet.invulnerable = false;
+    }, newPlayerJet.invulnerableDuration);
+
+    return newPlayerJet;
+  }
+
+  startBlinking() {
+    let isBlinkOn = false;
+    this.blinkInterval = setInterval(() => {
+      if (isBlinkOn) {
+        this.sprite.visible = true;
+        isBlinkOn = false;
+      } else {
+        this.sprite.visible = false;
+        isBlinkOn = true;
+      }
+    }, this.blinkDuration);
+  }
+
+  stopBlinking() {
+    clearInterval(this.blinkInterval);
+    this.sprite.visible = true;
   }
 }
 
