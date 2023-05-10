@@ -39,7 +39,6 @@ class EnemyJet extends MovingObject {
         bullet.move(0, 1); // Update the bullet's position
 
         // // Remove the bullet if it goes beyond the bottom edge of the screen
-
       });
     }, 2000);
   }
@@ -63,9 +62,10 @@ class EnemyJet extends MovingObject {
     if (this.type === "common") {
       if (
         this.sprite.y > this.app.view.height + this.sprite.height ||
-        this.destroyed
+        this.sprite.x < -this.sprite.width ||
+        this.sprite.x > this.app.view.width + this.sprite.width
       ) {
-        this.destroyed = true;
+        return true;
       }
       // Move the common enemy jet
       this.move(this.dx, this.dy);

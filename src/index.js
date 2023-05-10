@@ -196,18 +196,17 @@ app.ticker.add(() => {
       setTimeout(() => {
         app.stage.removeChild(explosionSprite);
       }, 1000);
-    } else {
-      enemyJet.checkBounds();
-      if (enemyJet.destroyed) {
-        app.stage.removeChild(enemyJet.sprite);
-        enemyJets.splice(i, 1); // Remove the enemy jet from the enemyJets array
-        clearInterval(enemyJet.bulletInterval);
-      }
+    }
+    console.log(enemyBullets);
+    if (enemyJet.checkBounds()) {
+      app.stage.removeChild(enemyJet.sprite);
+      enemyJets.splice(i, 1); // Remove the enemy jet from the enemyJets array
+      clearInterval(enemyJet.bulletInterval);
     }
   });
 
   const playerCollided = player.checkCollisions(enemyBullets);
-  console.log(enemyBullets);
+
   if (playerCollided) {
     app.stage.removeChild(player.sprite);
 
