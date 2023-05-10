@@ -15,16 +15,7 @@ class Bullet extends MovingObject {
   }
 
   // Update checkBounds to use this.app
-  checkBounds() {
-    if (this.direction === "up" && this.sprite.y < 0) {
-      this.destroyed = true;
-    } else if (
-      this.direction === "down" &&
-      this.sprite.y > this.app.view.height
-    ) {
-      this.destroyed = true;
-    }
-  }
+  checkBounds() {}
 }
 
 export default Bullet;

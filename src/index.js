@@ -146,6 +146,7 @@ const spawnInterval = setInterval(() => {
 }, 1000);
 
 app.ticker.add(() => {
+  console.log(enemyBullets);
   enemyJets.forEach((enemyJet, i) => {
     const collided = enemyJet.checkCollisions(playerBullets);
 
@@ -197,7 +198,7 @@ app.ticker.add(() => {
         app.stage.removeChild(explosionSprite);
       }, 1000);
     }
-    console.log(enemyBullets);
+
     if (enemyJet.checkBounds()) {
       app.stage.removeChild(enemyJet.sprite);
       enemyJets.splice(i, 1); // Remove the enemy jet from the enemyJets array
