@@ -2,7 +2,7 @@ import MovingObject from "./MovingObject";
 import Bullet from "./bullet";
 
 class PlayerJet extends MovingObject {
-  constructor(app, x, y, texture, playerBullets, score) {
+  constructor(app, x, y, texture, playerBullets, score, hp) {
     super(x, y, texture);
     this.speed = 5;
     this.app = app;
@@ -10,7 +10,7 @@ class PlayerJet extends MovingObject {
     this.score = score;
     this.playerBullets = playerBullets;
     this.currentWeapon = null;
-    // this.hp = 3
+    this.hp = hp;
     this.invulnerable = false;
     this.invulnerableDuration = 3000; // 3 seconds of invulnerability
     this.blinkDuration = 200; // 200 milliseconds per blink
@@ -171,13 +171,16 @@ class PlayerJet extends MovingObject {
     return false;
   }
   spawnNewPlayerJet() {
+    this.hp--;
+
     const newPlayerJet = new PlayerJet(
       this.app,
       this.app.view.width / 2,
       this.app.screen.height - 50,
       this.sprite.texture,
       this.playerBullets,
-      this.score
+      this.score,
+      this.hp
     );
 
     newPlayerJet.invulnerable = true;

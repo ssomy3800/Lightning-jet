@@ -64,7 +64,8 @@ let player = new PlayerJet(
   app.view.height - 50,
   playerTexture,
   playerBullets,
-  score
+  score,
+  3
 );
 const keys = {};
 let isPaused = false;
@@ -250,6 +251,8 @@ app.ticker.add(() => {
     setTimeout(() => {
       app.stage.removeChild(explosionSprite);
     }, 1000);
-    player = player.spawnNewPlayerJet();
+    if (player.hp !== 0) {
+      player = player.spawnNewPlayerJet();
+    }
   }
 });
