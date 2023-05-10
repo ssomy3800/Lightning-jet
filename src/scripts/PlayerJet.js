@@ -135,6 +135,32 @@ class PlayerJet extends MovingObject {
       this.move(this.speed, 0);
     }
   }
+  checkCollisions(bullets) {
+    const padding = 30; // Add padding to expand the range
+
+    for (let i = 0; i < bullets.length; i++) {
+      const bullet = bullets[i];
+      const expandedBounds = new PIXI.Rectangle(
+        this.sprite.getBounds().x - padding / 2,
+        this.sprite.getBounds().y,
+        this.sprite.getBounds().width + padding,
+        this.sprite.getBounds().height
+      );
+
+      if (
+        bullet.direction === "down" &&
+        expandedBounds.contains(bullet.sprite.x, bullet.sprite.y)
+      ) {
+        this.app.stage.removeChild(bullet.sprite);
+        bullets.splice(i, 1);
+        return true;
+      } else if (bullet.sprite.y > this.app.view.height) {
+        this.app.stage.removeChild(bullet.sprite);
+        bullets.splice(i, 1);
+      }
+    }
+    return false;
+  }
 }
 
 export default PlayerJet;

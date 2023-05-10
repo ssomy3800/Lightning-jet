@@ -91,25 +91,6 @@ app.ticker.add(() => {
   app.stage.addChild(player.sprite);
 
   /////////////////////////////added player jet///////////////////////////////
-
-  for (let i = enemyBullets.length - 1; i >= 0; i--) {
-    const bullet = enemyBullets[i];
-    bullet.move();
-    bullet.checkBounds(app);
-    if (bullet.destroyed) {
-      app.stage.removeChild(bullet.sprite);
-      enemyBullets.splice(i, 1);
-    }
-  }
-  ////////////////enemy bullet, will be destroyed once it goes outside the board///////////
-  for (let i = enemyJets.length - 1; i >= 0; i--) {
-    const enemyJet = enemyJets[i];
-    enemyJet.checkBounds();
-    if (enemyJet.destroyed) {
-      app.stage.removeChild(enemyJet.sprite);
-      enemyJets.splice(i, 1); // Remove the enemy jet from the enemyJets array
-    }
-  }
 });
 ///////////////////remove enemy jet if it got hit by player bullet//////////////
 const enemyJetTexture = PIXI.Texture.from("./src/picture/jet.png");
@@ -124,6 +105,7 @@ function spawnEnemyJets() {
       app.view.width,
       (Math.random() * app.view.height) / 3,
       enemyJetTexture,
+      enemyBullets,
       app,
       "common",
       -1,
@@ -139,6 +121,7 @@ function spawnBossJets() {
     app.view.width,
     (Math.random() * app.view.height) / 4,
     bossJetTexture,
+    enemyBullets,
     app,
     "boss",
     -1,
@@ -149,7 +132,7 @@ function spawnBossJets() {
 }
 let enemySpawnCount = 0;
 
-const enemyCount = 15;
+const enemyCount = 10;
 
 // Call spawnEnemyJets function every 10 seconds
 const spawnInterval = setInterval(() => {
@@ -176,7 +159,7 @@ app.ticker.add(() => {
 
       // Remove the enemy jet sprite
       app.stage.removeChild(enemyJet.sprite);
-
+      clearInterval(enemyJet.bulletInterval);
       // Add explosion animation
       const spriteSheet = PIXI.Texture.from("./src/picture/enemyExplosion.png");
       const frameWidth = 192;
@@ -213,6 +196,55 @@ app.ticker.add(() => {
       setTimeout(() => {
         app.stage.removeChild(explosionSprite);
       }, 1000);
+    } else {
+      enemyJet.checkBounds();
+      if (enemyJet.destroyed) {
+        app.stage.removeChild(enemyJet.sprite);
+        enemyJets.splice(i, 1); // Remove the enemy jet from the enemyJets array
+        clearInterval(enemyJet.bulletInterval);
+      }
     }
   });
+
+  const playerCollided = player.checkCollisions(enemyBullets);
+  console.log(enemyBullets);
+  if (playerCollided) {
+    app.stage.removeChild(player.sprite);
+
+    const spriteSheet = PIXI.Texture.from("./src/picture/enemyExplosion.png");
+    const frameWidth = 192;
+    const frameHeight = 192;
+    const numRows = 4;
+    const numCols = 5;
+    const explosionTextures = [];
+
+    for (let row = 0; row < numRows; row++) {
+      for (let col = 0; col < numCols; col++) {
+        const frameTexture = new PIXI.Texture(
+          spriteSheet,
+          new PIXI.Rectangle(
+            col * frameWidth,
+            row * frameHeight,
+            frameWidth,
+            frameHeight
+          )
+        );
+        explosionTextures.push(frameTexture);
+      }
+    }
+
+    const explosionSprite = new PIXI.AnimatedSprite(explosionTextures);
+    explosionSprite.anchor.set(0.5);
+    explosionSprite.loop = true;
+    explosionSprite.animationSpeed = 0.1;
+    explosionSprite.visible = true;
+    explosionSprite.position.set(player.sprite.x, player.sprite.y);
+    app.stage.addChild(explosionSprite);
+    explosionSprite.play();
+
+    // Remove explosion animation after 1 second
+    setTimeout(() => {
+      app.stage.removeChild(explosionSprite);
+    }, 1000);
+  }
 });

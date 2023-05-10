@@ -2,9 +2,10 @@ import MovingObject from "./MovingObject";
 import Bullet from "./bullet";
 
 class EnemyJet extends MovingObject {
-  constructor(x, y, texture, app, type, dx, dy) {
+  constructor(x, y, texture, enemyBullets, app, type, dx, dy) {
     super(x, y, texture);
     this.speed = 0.5;
+    this.enemyBullets = enemyBullets;
     this.app = app;
     this.type = type;
     this.dx = dx;
@@ -31,25 +32,18 @@ class EnemyJet extends MovingObject {
         this.app // Add app
       );
       this.app.stage.addChild(bullet.sprite);
+      this.enemyBullets.push(bullet);
 
       // Add this block to update the enemy bullet's position
       this.app.ticker.add(() => {
         bullet.move(0, 1); // Update the bullet's position
 
-        // Remove the bullet if it goes beyond the bottom edge of the screen
-        if (bullet.sprite.y > this.app.view.height) {
-          this.app.stage.removeChild(bullet.sprite);
-        }
+        // // Remove the bullet if it goes beyond the bottom edge of the screen
+
       });
     }, 2000);
   }
 
-  // move(dx, dy) {
-  //   this.app.ticker.add(() => {
-  //     this.sprite.x += this.speed * dx;
-  //     this.sprite.y += this.speed * dy;
-  //   });
-  // }
   move(dx, dy) {
     // Remove the existing ticker function if there's any
     if (this.moveTicker) {
@@ -89,7 +83,7 @@ class EnemyJet extends MovingObject {
   }
   checkCollisions(bullets) {
     const padding = 30; // Add padding to expand the range
-    
+
     for (let i = 0; i < bullets.length; i++) {
       const bullet = bullets[i];
       const expandedBounds = new PIXI.Rectangle(
