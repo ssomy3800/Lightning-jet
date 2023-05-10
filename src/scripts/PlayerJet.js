@@ -17,6 +17,8 @@ class PlayerJet extends MovingObject {
     this.blinkInterval = null;
     this.upgradeWeapon();
     this.fireBullet();
+    this.hpElement = document.getElementById("hp");
+    this.updateHP();
   }
   fireBullet() {
     this.app.ticker.add(() => {
@@ -39,8 +41,11 @@ class PlayerJet extends MovingObject {
       }
     });
   }
+  updateHP() {
+    this.hpElement.innerText = `Life Token: ${this.hp}`;
+  }
   upgradeWeapon() {
-    const bulletTexture = PIXI.Texture.from("./src/picture/playerbullet.png");
+    const bulletTexture = PIXI.Texture.from("./src/assets/playerbullet.png");
 
     // Create a new bullet every second
     if (this.score.enemyKillCount > 5) {

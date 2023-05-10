@@ -10,9 +10,9 @@ const app = new PIXI.Application({
 document.getElementById("main").appendChild(app.view);
 async function setup() {
   const bgTextures = [
-    await PIXI.Assets.load("./src/picture/bg1.png"),
-    await PIXI.Assets.load("./src/picture/bg2.png"),
-    await PIXI.Assets.load("./src/picture/bg3.png"),
+    await PIXI.Assets.load("./src/assets/bg1.png"),
+    await PIXI.Assets.load("./src/assets/bg2.png"),
+    await PIXI.Assets.load("./src/assets/bg3.png"),
   ];
 
   const baseBackground = new PIXI.Sprite(bgTextures[0]);
@@ -51,7 +51,7 @@ async function setup() {
 
 setup();
 ///////////////fading background///////////////////////
-const playerTexture = PIXI.Texture.from("./src/picture/playerjet.png");
+const playerTexture = PIXI.Texture.from("./src/assets/playerjet.png");
 const playerBullets = [];
 const enemyBullets = [];
 const score = {
@@ -96,8 +96,8 @@ app.ticker.add(() => {
   /////////////////////////////added player jet///////////////////////////////
 });
 ///////////////////remove enemy jet if it got hit by player bullet//////////////
-const enemyJetTexture = PIXI.Texture.from("./src/picture/jet.png");
-const bossJetTexture = PIXI.Texture.from("./src/picture/boss.png");
+const enemyJetTexture = PIXI.Texture.from("./src/assets/jet.png");
+const bossJetTexture = PIXI.Texture.from("./src/assets/boss.png");
 
 const enemyJets = [];
 let bossJet = null;
@@ -155,6 +155,7 @@ app.ticker.add(() => {
     if (collided) {
       console.log("Enemy jet destroyed!");
       score.enemyKillCount++;
+      document.getElementById("scoreValue").innerHTML = score.enemyKillCount;
       player.upgradeWeapon();
 
       // Remove the destroyed enemy jet from the array
@@ -164,7 +165,7 @@ app.ticker.add(() => {
       app.stage.removeChild(enemyJet.sprite);
       clearInterval(enemyJet.bulletInterval);
       // Add explosion animation
-      const spriteSheet = PIXI.Texture.from("./src/picture/enemyExplosion.png");
+      const spriteSheet = PIXI.Texture.from("./src/assets/enemyExplosion.png");
       const frameWidth = 192;
       const frameHeight = 192;
       const numRows = 4;
@@ -215,7 +216,7 @@ app.ticker.add(() => {
     app.stage.removeChild(player.sprite);
     clearInterval(player.currentWeapon);
 
-    const spriteSheet = PIXI.Texture.from("./src/picture/enemyExplosion.png");
+    const spriteSheet = PIXI.Texture.from("./src/assets/enemyExplosion.png");
     const frameWidth = 192;
     const frameHeight = 192;
     const numRows = 4;

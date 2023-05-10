@@ -23,7 +23,7 @@ class EnemyJet extends MovingObject {
   fireBullet() {
     // Create a new bullet every 0.5 seconds
     this.bulletInterval = setInterval(() => {
-      const bulletTexture = PIXI.Texture.from("./src/picture/playerbullet.png"); // Update the texture
+      const bulletTexture = PIXI.Texture.from("./src/assets/playerbullet.png"); // Update the texture
       const bullet = new Bullet(
         this.sprite.x,
         this.sprite.y + this.sprite.height / 2,
