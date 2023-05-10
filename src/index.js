@@ -9,28 +9,40 @@ const app = new PIXI.Application({
 //////////////////////////////create gameboard//////////////////////////////////
 document.getElementById("main").appendChild(app.view);
 async function setup() {
-  const bg1Texture = await PIXI.Assets.load("./src/picture/bg1.png");
-  const bg2Texture = await PIXI.Assets.load("./src/picture/bg2.png");
+  const bgTextures = [
+    await PIXI.Assets.load("./src/picture/bg1.png"),
+    await PIXI.Assets.load("./src/picture/bg2.png"),
+    await PIXI.Assets.load("./src/picture/bg3.png"),
+  ];
 
-  const bg1 = new PIXI.Sprite(bg1Texture);
-  const bg2 = new PIXI.Sprite(bg2Texture);
+  const baseBackground = new PIXI.Sprite(bgTextures[0]);
+  app.stage.addChild(baseBackground);
 
-  bg2.alpha = 0;
+  const changingBackgrounds = [
+    new PIXI.Sprite(bgTextures[1]),
+    new PIXI.Sprite(bgTextures[2]),
+  ];
 
-  app.stage.addChild(bg1);
-  app.stage.addChild(bg2);
+  changingBackgrounds.forEach((bg, index) => {
+    bg.alpha = index === 0 ? 1 : 0;
+    app.stage.addChild(bg);
+  });
 
   let fadeIn = true;
+  let currentBgIndex = 0;
+  let nextBgIndex = 1;
 
   app.ticker.add(() => {
     if (fadeIn) {
-      bg2.alpha += 0.01;
-      if (bg2.alpha >= 3) {
+      changingBackgrounds[nextBgIndex].alpha += 0.005;
+      if (changingBackgrounds[nextBgIndex].alpha >= 1) {
         fadeIn = false;
+        currentBgIndex = (currentBgIndex + 1) % changingBackgrounds.length;
+        nextBgIndex = (currentBgIndex + 1) % changingBackgrounds.length;
       }
     } else {
-      bg2.alpha -= 0.01;
-      if (bg2.alpha <= 0) {
+      changingBackgrounds[currentBgIndex].alpha -= 0.005;
+      if (changingBackgrounds[currentBgIndex].alpha <= 0) {
         fadeIn = true;
       }
     }
@@ -38,7 +50,7 @@ async function setup() {
 }
 
 setup();
-
+///////////////fading background///////////////////////
 const playerTexture = PIXI.Texture.from("./src/picture/playerjet.png");
 const playerBullets = [];
 const enemyBullets = [];
@@ -153,11 +165,54 @@ const spawnInterval = setInterval(() => {
 app.ticker.add(() => {
   enemyJets.forEach((enemyJet, i) => {
     const collided = enemyJet.checkCollisions(playerBullets);
+
     if (collided) {
+      console.log("Enemy jet destroyed!");
       score.enemyKillCount++;
       player.upgradeWeapon();
+
+      // Remove the destroyed enemy jet from the array
+      enemyJets.splice(i, 1);
+
+      // Remove the enemy jet sprite
       app.stage.removeChild(enemyJet.sprite);
-      enemyJets.splice(i, 1); // Remove the destroyed enemy jet from the array
+
+      // Add explosion animation
+      const spriteSheet = PIXI.Texture.from("./src/picture/enemyExplosion.png");
+      const frameWidth = 192;
+      const frameHeight = 192;
+      const numRows = 4;
+      const numCols = 5;
+      const explosionTextures = [];
+
+      for (let row = 0; row < numRows; row++) {
+        for (let col = 0; col < numCols; col++) {
+          const frameTexture = new PIXI.Texture(
+            spriteSheet,
+            new PIXI.Rectangle(
+              col * frameWidth,
+              row * frameHeight,
+              frameWidth,
+              frameHeight
+            )
+          );
+          explosionTextures.push(frameTexture);
+        }
+      }
+
+      const explosionSprite = new PIXI.AnimatedSprite(explosionTextures);
+      explosionSprite.anchor.set(0.5);
+      explosionSprite.loop = true;
+      explosionSprite.animationSpeed = 0.1;
+      explosionSprite.visible = true;
+      explosionSprite.position.set(enemyJet.sprite.x, enemyJet.sprite.y);
+      app.stage.addChild(explosionSprite);
+      explosionSprite.play();
+
+      // Remove explosion animation after 1 second
+      setTimeout(() => {
+        app.stage.removeChild(explosionSprite);
+      }, 1000);
     }
   });
 });
