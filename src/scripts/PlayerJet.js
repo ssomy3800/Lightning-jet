@@ -9,6 +9,7 @@ class PlayerJet extends MovingObject {
     this.destroyed = false;
     this.score = score;
     this.playerBullets = playerBullets;
+    this.weaponLevel = 1; // default weapon level is 1
     this.currentWeapon = null;
     this.hp = hp;
     this.invulnerable = false;
@@ -49,6 +50,7 @@ class PlayerJet extends MovingObject {
 
     // Create a new bullet every second
     if (this.score.enemyKillCount > 5) {
+      this.weaponLevel++;
       clearInterval(this.currentWeapon);
       this.currentWeapon = setInterval(() => {
         const bullet1 = new Bullet(
@@ -80,6 +82,7 @@ class PlayerJet extends MovingObject {
         this.playerBullets.push(bullet1, bullet2, bullet3);
       }, 700);
     } else if (this.score.enemyKillCount > 3) {
+      this.weaponLevel++;
       clearInterval(this.currentWeapon);
       this.currentWeapon = setInterval(() => {
         const bullet = new Bullet(
@@ -98,6 +101,7 @@ class PlayerJet extends MovingObject {
         this.playerBullets.push(bullet, bullet2);
       }, 700);
     } else if (this.score.enemyKillCount > 1) {
+      this.weaponLevel++;
       clearInterval(this.currentWeapon);
       this.currentWeapon = setInterval(() => {
         const bullet = new Bullet(
@@ -122,6 +126,21 @@ class PlayerJet extends MovingObject {
         this.playerBullets.push(bullet);
       }, 1000);
     }
+
+    // Update the weapon level based on the score
+    if (this.score.enemyKillCount > 5) {
+      this.weaponLevel = 4;
+    } else if (this.score.enemyKillCount > 3) {
+      this.weaponLevel = 3;
+    } else if (this.score.enemyKillCount > 1) {
+      this.weaponLevel = 2;
+    } else {
+      this.weaponLevel = 1;
+    }
+
+    // Update the HUD element if the weapon level has changed
+
+    document.getElementById("weapon-level").innerText = `${this.weaponLevel}`;
   }
 
   handleKeyboard(keys) {

@@ -153,7 +153,6 @@ app.ticker.add(() => {
     const collided = enemyJet.checkCollisions(playerBullets);
 
     if (collided) {
-      console.log("Enemy jet destroyed!");
       score.enemyKillCount++;
       document.getElementById("scoreValue").innerHTML = score.enemyKillCount;
       player.upgradeWeapon();
