@@ -2,7 +2,16 @@ import PlayerJet from "./scripts/PlayerJet";
 import EnemyJet from "./scripts/EnemyJet";
 
 let gameStarted = false;
+let defeat = false;
 function startGame() {
+  const bgm = document.querySelector("#bgm");
+  const bossBgm = document.querySelector("#bossBgm");
+
+  // Start playing the BGM when the game starts
+  bgm.play();
+
+  // bossBgm.pause();
+  // bgm.play();
   const app = new PIXI.Application({
     width: 800,
     height: 600,
@@ -67,7 +76,7 @@ function startGame() {
     playerTexture,
     playerBullets,
     score,
-    10
+    2
   );
   const keys = {};
   let isPaused = false;
@@ -89,47 +98,100 @@ function startGame() {
   });
   let bossJet = null;
   function checkGameState() {
-    console.log(bossJet);
-    if (player.hp <= 0) {
+    if (defeat) {
+      app.ticker.stop();
       displayDefeatPicture();
+      bossBgm.pause();
+      bgm.play();
     } else if (bossJet) {
       if (!bossJet.bossAlive) {
+        app.ticker.stop();
         displayVictoryPicture();
+        bossBgm.pause();
+        bgm.play();
       }
     }
   }
 
-  // function displayDefeatPicture() {
-  //   let gameContainer = document.getElementById("main");
-  //   gameContainer.innerHTML =
-  //     '<img src="./src/assets/wallpaper.png" alt="Defeat">';
-  // }
   function displayDefeatPicture() {
     let gameContainer = document.getElementById("gameContainer");
 
     // clear the gameContainer
     gameContainer.innerHTML = "";
 
-    // create the defeat message
-    let defeatMessage = document.createElement("h2");
-    defeatMessage.innerText = "Defeat...";
-    defeatMessage.style.textAlign = "center";
+    // create a new container for the image and text
+    let imageContainer = document.createElement("div");
+    imageContainer.style.position = "relative";
+    imageContainer.style.display = "flex";
+    imageContainer.style.justifyContent = "center";
+    imageContainer.style.alignItems = "center";
+    imageContainer.style.width = "100%";
+    imageContainer.style.height = "100%";
 
     // create the defeat image
     let defeatImage = document.createElement("img");
-    defeatImage.src = "./src/assets/wallpaper.png";
+    defeatImage.src = "./src/assets/defeat.png";
     defeatImage.alt = "Defeat";
     defeatImage.style.display = "block";
-    defeatImage.style.margin = "0 auto";
+    defeatImage.style.width = "100%";
+    defeatImage.style.height = "auto";
+
+    // create the defeat message
+    let defeatMessage = document.createElement("h2");
+    defeatMessage.innerHTML = "Defeat...<br>Press Y to restart";
+    defeatMessage.style.position = "absolute";
+    defeatMessage.style.textAlign = "center";
+    defeatMessage.style.zIndex = "1";
+    defeatMessage.style.fontFamily = "'Orbitron', sans-serif";
+    defeatMessage.style.fontSize = "48px";
+    defeatMessage.style.color = "white";
+    defeatMessage.style.textShadow =
+      "0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000, 0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300";
 
     // append elements to the gameContainer
-    gameContainer.appendChild(defeatMessage);
-    gameContainer.appendChild(defeatImage);
+    imageContainer.appendChild(defeatImage);
+    imageContainer.appendChild(defeatMessage);
+    gameContainer.appendChild(imageContainer);
   }
   function displayVictoryPicture() {
-    let gameContainer = document.getElementById("main");
-    gameContainer.innerHTML =
-      '<img src="./src/assets/wallpaper.png" alt="Victory">';
+    let gameContainer = document.getElementById("gameContainer");
+
+    // clear the gameContainer
+    gameContainer.innerHTML = "";
+
+    // create a new container for the image and text
+    let imageContainer = document.createElement("div");
+    imageContainer.style.position = "relative";
+    imageContainer.style.display = "flex";
+    imageContainer.style.justifyContent = "center";
+    imageContainer.style.alignItems = "center";
+    imageContainer.style.width = "100%";
+    imageContainer.style.height = "100%";
+
+    // create the victory image
+    let victoryImage = document.createElement("img");
+    victoryImage.src = "./src/assets/victory.png";
+    victoryImage.alt = "Victory";
+    victoryImage.style.display = "block";
+    victoryImage.style.width = "100%";
+    victoryImage.style.height = "auto";
+
+    // create the victory message
+    let victoryMessage = document.createElement("h2");
+    victoryMessage.innerHTML = "Victory!!!<br>Press Y to restart";
+    victoryMessage.style.position = "absolute";
+    victoryMessage.style.textAlign = "center";
+    victoryMessage.style.zIndex = "1";
+    victoryMessage.style.fontFamily = "'Orbitron', sans-serif";
+    victoryMessage.style.fontSize = "48px";
+    victoryMessage.style.color = "white";
+    victoryMessage.style.textShadow =
+      "0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000, 0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300";
+
+    // append elements to the gameContainer
+    imageContainer.appendChild(victoryImage);
+    imageContainer.appendChild(victoryMessage);
+    gameContainer.appendChild(imageContainer);
   }
   ////////////////////////////to set the player can hold on to key to keep moving on the direction/////////////
   app.ticker.add(() => {
@@ -189,6 +251,8 @@ function startGame() {
       enemySpawnCount++;
     } else {
       spawnBossJets();
+      bgm.pause();
+      bossBgm.play();
       clearInterval(spawnInterval);
     }
   }, 1000);
@@ -307,8 +371,10 @@ function startGame() {
         app.stage.removeChild(explosionSprite);
         checkGameState();
       }, 1000);
-      if (player.hp !== 1) {
+      if (player.hp !== 0) {
         player = player.spawnNewPlayerJet();
+      } else {
+        defeat = !defeat;
       }
     }
   });
@@ -321,6 +387,11 @@ document.addEventListener("keydown", (event) => {
       startGame();
       document.getElementById("startScreen").style.display = "none";
     }
+  }
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key.toLowerCase() === "y") {
+    location.reload();
   }
 });
 ///////////////////hide startpage, start the game/////////////////////////////
