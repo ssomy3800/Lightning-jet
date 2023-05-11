@@ -271,6 +271,7 @@ document.addEventListener("keydown", (event) => {
     if (!gameStarted) {
       gameStarted = true;
       startGame();
+      document.getElementById("startScreen").style.display = "none";
     }
   }
 });
