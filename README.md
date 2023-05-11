@@ -23,5 +23,15 @@ In addition, this project will include:
 ## Technologies, Libraries, APIs:
 The pixi.js library is used to rendering images, checking boundries and collision
 
+## Production Timeline:
+Friday Afternoon & Weekend: be able to render a basic gaming interface, with all jet spawn on the screen, add logic for jets to shoot bullets.
+Monday: jets will spawn properly, user will have iframe upon respawn
+Tuesday: add background, add sound effect.
+Wednesday: add addition features like pause and mute
+Thursday Morning: practicing presentation, sharping the project
 
 ## Future Implementations:
+Adding sound effect
+Adding player jet ability to cast ultimate(most likely a giant lazer which has more damage and it checks for collision at certain frame)
+Adding more type of bullet for both player and enemy jet
+
