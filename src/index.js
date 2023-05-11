@@ -76,17 +76,38 @@ function startGame() {
     playerTexture,
     playerBullets,
     score,
-    2
+    5
   );
   const keys = {};
   let isPaused = false;
-
+  function isAudioPlaying(audio) {
+    return (
+      audio.currentTime > 0 &&
+      !audio.paused &&
+      !audio.ended &&
+      audio.readyState > 2
+    );
+  }
   document.addEventListener("keydown", (e) => {
     if (e.key === "P" || e.key === "p") {
       if (isPaused) {
         app.ticker.start();
+        if (isAudioPlaying(bossBgm)) {
+          bossBgm.resume();
+        } else if (!isAudioPlaying(bgm)) {
+          if (bossJet) {
+            bossBgm.play();
+          } else {
+            bgm.play();
+          }
+        }
       } else {
         app.ticker.stop();
+        if (isAudioPlaying(bossBgm)) {
+          bossBgm.pause();
+        } else if (isAudioPlaying(bgm)) {
+          bgm.pause();
+        }
       }
       isPaused = !isPaused;
     } else {
@@ -204,41 +225,41 @@ function startGame() {
   });
   ///////////////////remove enemy jet if it got hit by player bullet//////////////
   const enemyJetTexture = PIXI.Texture.from("./src/assets/jet.png");
-  const minoBossJetTexture = PIXI.Texture.from("./src/assets/miniboss.png");
+  const miniBossJetTexture = PIXI.Texture.from("./src/assets/miniboss.png");
   const bossJetTexture = PIXI.Texture.from("./src/assets/boss.png");
 
   const enemyJets = [];
 
   // Add this function to spawn a group of 5 enemy jets
-  function spawnEnemyJets() {
-    for (let i = 0; i < 1; i++) {
-      const enemyJet = new EnemyJet(
-        app.view.width,
-        (Math.random() * app.view.height) / 3,
-        enemyJetTexture,
-        enemyBullets,
-        app,
-        "common",
-        -1,
-        0
-      );
-      enemyJets.push(enemyJet);
-      app.stage.addChild(enemyJet.sprite);
-    }
-  }
+  // function spawnEnemyJets() {
+  //   for (let i = 0; i < 1; i++) {
+  //     const enemyJet = new EnemyJet(
+  //       app.view.width,
+  //       (Math.random() * app.view.height) / 3,
+  //       enemyJetTexture,
+  //       enemyBullets,
+  //       app,
+  //       "common",
+  //       -1,
+  //       0
+  //     );
+  //     enemyJets.push(enemyJet);
+  //     app.stage.addChild(enemyJet.sprite);
+  //   }
+  // }
   function spawnMiniBoss() {
-    bossJet = new EnemyJet(
+    const miniBossJet = new EnemyJet(
       app.view.width,
       app.view.height / 4,
-      bossJetTexture,
+      miniBossJetTexture,
       enemyBullets,
       app,
       "miniboss",
       -1,
       0
     );
-    app.stage.addChild(bossJet.sprite);
-    enemyJets.push(bossJet);
+    app.stage.addChild(miniBossJet.sprite);
+    enemyJets.push(miniBossJet);
   }
 
   function spawnBossJets() {
@@ -255,22 +276,89 @@ function startGame() {
     app.stage.addChild(bossJet.sprite);
     enemyJets.push(bossJet);
   }
-  let enemySpawnCount = 0;
 
-  const enemyCount = 10;
+  const totalWaves = 2;
+  const enemiesPerWave = 10;
+  const miniBossInterval = 10 * 1000; // 10 seconds
+  const bossSpawnInterval = 10 * 1000; // 10 seconds
+  const commonJetInterval = 2 * 1000; // 2 seconds
 
-  // Call spawnEnemyJets function every 10 seconds
+  // Track the current wave and enemy.
+  let currentWave = 0;
+  let currentEnemy = 0;
+
+  // Use setInterval to spawn enemies.
   const spawnInterval = setInterval(() => {
-    if (enemySpawnCount < enemyCount) {
-      spawnEnemyJets();
-      enemySpawnCount++;
-    } else {
-      spawnBossJets();
-      bgm.pause();
-      bossBgm.play();
-      clearInterval(spawnInterval);
+    // If we've spawned all enemies for the current wave...
+    if (currentEnemy >= enemiesPerWave) {
+      // Reset the enemy count.
+      currentEnemy = 0;
+
+      // Increase the wave count.
+      currentWave++;
+
+      // If we've spawned all waves, spawn the boss and clear the interval.
+      if (currentWave > totalWaves) {
+        spawnBossJets();
+        bgm.pause();
+        bossBgm.play();
+        clearInterval(spawnInterval);
+        return;
+      }
+
+      // Otherwise, spawn a mini boss and pause before the next wave.
+      spawnMiniBoss();
+
+      // Wait for the mini boss interval before spawning the next wave.
+      setTimeout(() => {
+        // Continue spawning enemies for the next wave.
+        spawnEnemiesForWave(currentWave);
+      }, miniBossInterval);
+
+      return;
     }
-  }, 1000);
+
+    // Spawn enemies for the current wave.
+    spawnEnemiesForWave(currentWave);
+
+    // Increase the enemy count.
+    currentEnemy++;
+  }, bossSpawnInterval);
+
+  function spawnEnemiesForWave(wave) {
+    // Depending on the wave, spawn enemies from the right or left.
+    const spawnDirection = wave % 2 === 0 ? "right" : "left";
+
+    // Use setInterval to spawn common jets every 2 seconds.
+    const commonJetSpawnInterval = setInterval(() => {
+      spawnEnemyJets(spawnDirection);
+      currentEnemy++;
+
+      // If we've spawned all enemies for the current wave, clear the interval.
+      if (currentEnemy >= enemiesPerWave) {
+        clearInterval(commonJetSpawnInterval);
+      }
+    }, commonJetInterval);
+  }
+
+  function spawnEnemyJets(direction) {
+    for (let i = 0; i < 1; i++) {
+      const enemyJet = new EnemyJet(
+        direction === "right" ? app.view.width : 0,
+        (Math.random() * app.view.height) / 3,
+        enemyJetTexture,
+        enemyBullets,
+        app,
+        "common",
+        direction === "right" ? -1 : 1,
+        0
+      );
+      enemyJets.push(enemyJet);
+      app.stage.addChild(enemyJet.sprite);
+    }
+  }
+
+  // Modify the spawnBossJets function to spawn from the top.
 
   app.ticker.add(() => {
     enemyJets.forEach((enemyJet, i) => {

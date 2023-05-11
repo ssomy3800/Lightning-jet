@@ -72,7 +72,7 @@ class EnemyJet extends MovingObject {
       }
       // Move the common enemy jet
       this.move(this.dx, this.dy);
-    } else if (this.type === "boss") {
+    } else {
       if (
         (this.dx < 0 && this.sprite.x <= 10) ||
         (this.dx > 0 && this.sprite.x >= this.app.view.width)
