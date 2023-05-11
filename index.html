@@ -63,19 +63,20 @@
         </div>
         <div id="main"></div>
         <div id="navbar">
+          <audio id="bgm" preload="auto">
+            <source src="./src/assets/dawn.mp3" type="audio/mpeg" />
+          </audio>
+
+          <audio id="bossBgm" preload="auto">
+            <source src="./src/assets/boss.mp3" type="audio/mpeg" />
+          </audio>
+          <button id="muteButton">Mute</button>
           <a href="https://github.com/ssomy3800/Lightning-jet" id="buttonLink">
             <img src="./src/assets/githublogoo.png" alt="Start Button" />
           </a>
         </div>
       </div>
     </div>
-    <audio id="bgm" preload="auto">
-      <source src="./src/assets/dawn.mp3" type="audio/mpeg" />
-    </audio>
-
-    <audio id="bossBgm" preload="auto">
-      <source src="./src/assets/boss.mp3" type="audio/mpeg" />
-    </audio>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.2.4/pixi.min.js"></script>
     <script src="./dist/main.js" defer></script>

@@ -10,8 +10,21 @@ function startGame() {
   // Start playing the BGM when the game starts
   bgm.play();
 
-  // bossBgm.pause();
-  // bgm.play();
+  const muteButton = document.getElementById("muteButton");
+
+  muteButton.addEventListener("click", () => {
+    const isMuted = bgm.muted || bossBgm.muted;
+
+    if (isMuted) {
+      bgm.muted = false;
+      bossBgm.muted = false;
+      muteButton.innerText = "Mute";
+    } else {
+      bgm.muted = true;
+      bossBgm.muted = true;
+      muteButton.innerText = "Unmute";
+    }
+  });
   const app = new PIXI.Application({
     width: 800,
     height: 600,
