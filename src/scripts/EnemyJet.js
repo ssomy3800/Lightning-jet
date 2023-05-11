@@ -14,7 +14,9 @@ class EnemyJet extends MovingObject {
     if (this.type === "common") {
       this.hp = 1;
     } else if (this.type === "boss") {
-      this.hp = 10;
+      this.hp = 100;
+    } else if (this.type === "miniboss") {
+      this.hp = 20;
     }
     this.bulletInterval = null;
     this.fireBullet();

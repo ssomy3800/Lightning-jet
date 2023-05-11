@@ -204,6 +204,7 @@ function startGame() {
   });
   ///////////////////remove enemy jet if it got hit by player bullet//////////////
   const enemyJetTexture = PIXI.Texture.from("./src/assets/jet.png");
+  const minoBossJetTexture = PIXI.Texture.from("./src/assets/miniboss.png");
   const bossJetTexture = PIXI.Texture.from("./src/assets/boss.png");
 
   const enemyJets = [];
@@ -225,11 +226,25 @@ function startGame() {
       app.stage.addChild(enemyJet.sprite);
     }
   }
+  function spawnMiniBoss() {
+    bossJet = new EnemyJet(
+      app.view.width,
+      app.view.height / 4,
+      bossJetTexture,
+      enemyBullets,
+      app,
+      "miniboss",
+      -1,
+      0
+    );
+    app.stage.addChild(bossJet.sprite);
+    enemyJets.push(bossJet);
+  }
 
   function spawnBossJets() {
     bossJet = new EnemyJet(
       app.view.width,
-      (Math.random() * app.view.height) / 4,
+      -50,
       bossJetTexture,
       enemyBullets,
       app,
