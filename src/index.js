@@ -67,7 +67,7 @@ function startGame() {
     playerTexture,
     playerBullets,
     score,
-    3
+    10
   );
   const keys = {};
   let isPaused = false;
@@ -87,7 +87,50 @@ function startGame() {
   document.addEventListener("keyup", (e) => {
     keys[e.key] = false;
   });
+  let bossJet = null;
+  function checkGameState() {
+    console.log(bossJet);
+    if (player.hp <= 0) {
+      displayDefeatPicture();
+    } else if (bossJet) {
+      if (!bossJet.bossAlive) {
+        displayVictoryPicture();
+      }
+    }
+  }
 
+  // function displayDefeatPicture() {
+  //   let gameContainer = document.getElementById("main");
+  //   gameContainer.innerHTML =
+  //     '<img src="./src/assets/wallpaper.png" alt="Defeat">';
+  // }
+  function displayDefeatPicture() {
+    let gameContainer = document.getElementById("gameContainer");
+
+    // clear the gameContainer
+    gameContainer.innerHTML = "";
+
+    // create the defeat message
+    let defeatMessage = document.createElement("h2");
+    defeatMessage.innerText = "Defeat...";
+    defeatMessage.style.textAlign = "center";
+
+    // create the defeat image
+    let defeatImage = document.createElement("img");
+    defeatImage.src = "./src/assets/wallpaper.png";
+    defeatImage.alt = "Defeat";
+    defeatImage.style.display = "block";
+    defeatImage.style.margin = "0 auto";
+
+    // append elements to the gameContainer
+    gameContainer.appendChild(defeatMessage);
+    gameContainer.appendChild(defeatImage);
+  }
+  function displayVictoryPicture() {
+    let gameContainer = document.getElementById("main");
+    gameContainer.innerHTML =
+      '<img src="./src/assets/wallpaper.png" alt="Victory">';
+  }
   ////////////////////////////to set the player can hold on to key to keep moving on the direction/////////////
   app.ticker.add(() => {
     if (!player.destroyed) {
@@ -102,7 +145,7 @@ function startGame() {
   const bossJetTexture = PIXI.Texture.from("./src/assets/boss.png");
 
   const enemyJets = [];
-  let bossJet = null;
+
   // Add this function to spawn a group of 5 enemy jets
   function spawnEnemyJets() {
     for (let i = 0; i < 1; i++) {
@@ -155,7 +198,6 @@ function startGame() {
       const collided = enemyJet.checkCollisions(playerBullets);
 
       if (collided) {
-        console.log("Enemy jet destroyed!");
         score.enemyKillCount++;
         // document.getElementById("scoreValue").innerHTML = score.enemyKillCount;
         document.getElementById(
@@ -207,6 +249,10 @@ function startGame() {
         // Remove explosion animation after 1 second
         setTimeout(() => {
           app.stage.removeChild(explosionSprite);
+
+          if (bossJet) {
+            checkGameState();
+          }
         }, 1000);
       }
 
@@ -259,13 +305,15 @@ function startGame() {
       // Remove explosion animation after 1 second
       setTimeout(() => {
         app.stage.removeChild(explosionSprite);
+        checkGameState();
       }, 1000);
-      if (player.hp !== 0) {
+      if (player.hp !== 1) {
         player = player.spawnNewPlayerJet();
       }
     }
   });
 }
+
 document.addEventListener("keydown", (event) => {
   if (event.code === "Space") {
     if (!gameStarted) {
@@ -275,3 +323,4 @@ document.addEventListener("keydown", (event) => {
     }
   }
 });
+///////////////////hide startpage, start the game/////////////////////////////

@@ -10,6 +10,7 @@ class EnemyJet extends MovingObject {
     this.type = type;
     this.dx = dx;
     this.dy = dy;
+    this.bossAlive = true;
     if (this.type === "common") {
       this.hp = 1;
     } else if (this.type === "boss") {
@@ -102,6 +103,9 @@ class EnemyJet extends MovingObject {
           bullets.splice(i, 1);
           this.hp--;
         } else {
+          if (this.type === "boss") {
+            this.bossAlive = false;
+          }
           this.app.stage.removeChild(this.sprite);
           this.app.stage.removeChild(bullet.sprite);
           bullets.splice(i, 1); // Remove the bullet from the bullets array
