@@ -140,7 +140,9 @@ class PlayerJet extends MovingObject {
 
     // Update the HUD element if the weapon level has changed
 
-    document.getElementById("weapon-level").innerText = `${this.weaponLevel}`;
+    document.getElementById(
+      "weapon-level"
+    ).innerText = `Current Weapon: ${this.weaponLevel}`;
   }
 
   handleKeyboard(keys) {
