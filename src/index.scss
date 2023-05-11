@@ -14,10 +14,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-shadow: 0 0 5px #2127d5, 0 0 10px #2127d5, 0 0 15px #2127d5,
+    0 0 20px #6a64d8, 0 0 30px #6a64d8, 0 0 40px #6a64d8;
+}
+#gameContent {
+  display: flex;
+  flex-direction: row;
 }
 
 #gameTitle {
   font-family: "Orbitron", sans-serif;
+  font-size: 24px;
   color: white;
   text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000,
     0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300;
@@ -30,8 +37,20 @@ body {
   position: absolute;
   left: 10px;
   bottom: 10px;
+  width: 200px; /* Adjust the width as necessary */
+  height: 500px; /* Adjust the height as necessary */
+  overflow: auto; /* This will add scrollbars if the content overflows */
 }
-
+#instructions-inGame {
+  color: white;
+  font-size: 20px;
+  font-family: "Luminari", cursive;
+  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000,
+    0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
 #instructions {
   font-family: "Orbitron", sans-serif;
   color: #ff0000;
@@ -85,4 +104,8 @@ body {
   background-size: cover;
   color: white;
   z-index: 1000;
+}
+#navbar {
+  margin-top: 65%;
+  display: flex;
 }

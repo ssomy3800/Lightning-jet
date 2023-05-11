@@ -30,28 +30,14 @@
         </li>
       </div>
       <a href="https://github.com/ssomy3800/Lightning-jet" id="buttonLink">
-        <img src="../src/assets/githublogoo.png" alt="Start Button" />
+        <img src="./src/assets/githublogoo.png" alt="Start Button" />
       </a>
     </div>
+
     <div id="gameContainer">
-      <h1 id="gameTitle">Lightning Jet</h1>
-      <div id="main"></div>
-      <div id="leftHub">
-        <ul id="instructions">
-          <li>
-            Press "WSAD" to control the player jet with direction
-            "up,down,left,right"
-          </li>
-          <li>press "P" to pause the game</li>
-          <li>
-            the player jet will have a set amount of respawn chance which
-            located at the top left of the screen
-          </li>
-        </ul>
-      </div>
       <div id="hud">
         <p id="hp"></p>
-
+        <div id="gameTitle">Lightning Jet</div>
         <div id="score">
           <span id="scoreValue"></span>
           <div id="weaponContainer">
@@ -59,7 +45,31 @@
           </div>
         </div>
       </div>
+      <div id="gameContent">
+        <div id="leftHub">
+          <ol id="instructions-inGame">
+            <li>
+              1. Press "WSAD" to control the player jet with direction
+              "up,down,left,right"
+            </li>
+            <p></p>
+            <li>2. press "P" to pause the game</li>
+            <p></p>
+            <li>
+              3. the player jet will have a set amount of respawn chance which
+              located at the top left of the screen
+            </li>
+          </ol>
+        </div>
+        <div id="main"></div>
+        <div id="navbar">
+          <a href="https://github.com/ssomy3800/Lightning-jet" id="buttonLink">
+            <img src="./src/assets/githublogoo.png" alt="Start Button" />
+          </a>
+        </div>
+      </div>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.2.4/pixi.min.js"></script>
     <script src="./dist/main.js" defer></script>
   </body>
