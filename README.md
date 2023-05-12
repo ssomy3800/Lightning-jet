@@ -64,3 +64,5 @@ Adding more type of bullet for both player and enemy jet
 ## About Me
 You can find me via email: ssomy3800@gmail.com
  
+## Credit
+jet pictures: pngegg.com BGM source : lost ark original sound track
