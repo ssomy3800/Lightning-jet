@@ -1,4 +1,5 @@
 # Lightning Jet
+live link : https://ssomy3800.github.io/Lightning-jet/
 
 ## Background: 
   this project is a 2d platform shooting game call "lightning jet." The player will use "WSAD" to control a fighter jet object which spawns at bottom of the play screen and dodges enemy jets bullets. If the players jet got hit by enemy's bullet or had a collision with them, the player's jet will fall. Depending on whether if the player has any "life point" left, the fighter jet will be respawned.
