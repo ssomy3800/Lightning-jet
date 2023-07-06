@@ -49,7 +49,8 @@ body {
     0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300;
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 5%;
+  background: linear-gradient(45deg, #ff0066, #ff8800);
 }
 #instructions {
   font-family: "Orbitron", sans-serif;
@@ -57,6 +58,7 @@ body {
   font-size: 20px;
   text-align: center;
   text-shadow: 2px 2px 4px #000000;
+  padding: 2%;
 }
 
 #instructions li {

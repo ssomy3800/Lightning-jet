@@ -17,8 +17,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-shadow: 0 0 5px #2127d5, 0 0 10px #2127d5, 0 0 15px #2127d5,
-    0 0 20px #6a64d8, 0 0 30px #6a64d8, 0 0 40px #6a64d8;
+  text-shadow: 0 0 5px #2127d5, 0 0 10px #2127d5, 0 0 15px #2127d5, 0 0 20px #6a64d8, 0 0 30px #6a64d8, 0 0 40px #6a64d8;
 }
 
 #gameContent {
@@ -30,8 +29,7 @@ body {
   font-family: "Orbitron", sans-serif;
   font-size: 24px;
   color: white;
-  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000,
-    0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300;
+  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000, 0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300;
 }
 
 #leftHub {
@@ -51,11 +49,11 @@ body {
   color: white;
   font-size: 16px;
   font-family: "Luminari", cursive;
-  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000,
-    0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300;
+  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000, 0 0 20px #ff3300, 0 0 30px #ff3300, 0 0 40px #ff3300;
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 5%;
+  background: linear-gradient(45deg, #ff0066, #ff8800);
 }
 
 #instructions {
@@ -64,6 +62,7 @@ body {
   font-size: 20px;
   text-align: center;
   text-shadow: 2px 2px 4px #000000;
+  padding: 2%;
 }
 
 #instructions li {
@@ -119,16 +118,4 @@ body {
 #navbar {
   margin-top: 65%;
   display: flex;
-  margin-left: 5%;
-}
-
-#muteButton {
-  height: 50px;
-  width: 70px;
-}
-
-#buttonLink {
-  width: 70px;
-  height: 50px;
-  object-fit: fill;
 }

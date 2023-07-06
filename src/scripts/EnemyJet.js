@@ -104,6 +104,7 @@ class EnemyJet extends MovingObject {
           this.app.stage.removeChild(bullet.sprite);
           bullets.splice(i, 1);
           this.hp--;
+          return false;
         } else {
           if (this.type === "boss") {
             this.bossAlive = false;
@@ -116,7 +117,7 @@ class EnemyJet extends MovingObject {
         }
       }
     }
-    return false;
+    // return false;
   }
 }
 
