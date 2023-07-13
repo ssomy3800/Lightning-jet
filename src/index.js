@@ -332,7 +332,7 @@ function startGame() {
     const scheduleEnemyJets = (time, quantity, direction, includeMiniBoss) => {
       scheduleTask(time, () => {
         for (let i = 0; i < quantity; i++) {
-          scheduleTask(i * 2000, () => {
+          scheduleTask(i * 4000, () => {
             spawnEnemyJets(direction);
             if (includeMiniBoss && i === includeMiniBoss - 1) {
               spawnMiniBoss();
@@ -343,13 +343,13 @@ function startGame() {
     };
 
     scheduleEnemyJets(3000, 5, "left");
-    scheduleEnemyJets(8000, 5, "right");
-    scheduleEnemyJets(13000, 5, "left", 3);
-    scheduleEnemyJets(23000, 10, "right");
-    scheduleEnemyJets(33000, 10, "left", 5);
+    scheduleEnemyJets(23000, 5, "right");
+    scheduleEnemyJets(43000, 5, "left", 3);
+    scheduleEnemyJets(83000, 10, "right");
+    scheduleEnemyJets(123000, 10, "left", 5);
 
     // Schedule boss spawn
-    scheduleTask(43000, () => {
+    scheduleTask(163000, () => {
       spawnBossJets();
       bgm.pause();
       bossBgm

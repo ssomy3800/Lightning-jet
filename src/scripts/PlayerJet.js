@@ -146,22 +146,28 @@ class PlayerJet extends MovingObject {
   }
 
   handleKeyboard(keys) {
-    if ((keys["w"] || keys["W"]) && this.sprite.y - this.speed > 0) {
+    if (
+      (keys["w"] || keys["W"] || keys["ArrowUp"]) &&
+      this.sprite.y - this.speed > 0
+    ) {
       this.move(0, -this.speed);
     }
 
     if (
-      (keys["s"] || keys["S"]) &&
+      (keys["s"] || keys["S"] || keys["ArrowDown"]) &&
       this.sprite.y + this.speed < this.app.view.height
     ) {
       this.move(0, this.speed);
     }
-    if ((keys["a"] || keys["A"]) && this.sprite.x - this.speed > 0) {
+    if (
+      (keys["a"] || keys["A"] || keys["ArrowLeft"]) &&
+      this.sprite.x - this.speed > 0
+    ) {
       this.move(-this.speed, 0);
     }
 
     if (
-      (keys["d"] || keys["D"]) &&
+      (keys["d"] || keys["D"] || keys["ArrowRight"]) &&
       this.sprite.x + this.speed < this.app.view.width
     ) {
       this.move(this.speed, 0);
